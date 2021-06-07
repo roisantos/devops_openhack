@@ -31,4 +31,4 @@ jobs:
             context: apis/poi/web
             file: Dockerfile
             push: true
-            tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_number }}
+            tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:$GITHUB_RUN_NUMBER
