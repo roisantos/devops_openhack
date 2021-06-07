@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ master ]    
     paths: 'apis/poi'
+  workflow_dispatch:
 
 jobs:
   build:
