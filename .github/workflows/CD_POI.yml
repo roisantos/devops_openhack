@@ -28,7 +28,9 @@ jobs:
         - name: Push to docker registry
           uses: docker/build-push-action@v2
           with:
+            # TODO: Fix context and file path
             context: apis/poi/web
-            file: Dockerfile
+            file: ./apis/poi/web/Dockerfile
             push: true
-            tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:564
+            # TODO: Fix github build number
+            tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_number }}
