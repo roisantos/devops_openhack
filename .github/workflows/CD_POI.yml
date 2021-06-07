@@ -5,10 +5,13 @@ on:
     branches: [ master ]    
   workflow_dispatch:
 
+
 name: CD_POI
 
 jobs:
     build-and-deploy:
+        environment: STAGING
+        
         runs-on: ubuntu-latest
         steps:
         # checkout the repo
