@@ -1,0 +1,48 @@
+on:
+  push: 
+    paths: 
+    - 'apis/userprofile/**'    
+    branches: [ master ]    
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: openhackprj6ity4userprofile   # set this to your application's name
+
+name: CD_USERPROFILE
+
+jobs:
+    build-and-deploy:
+        environment: STAGING
+        
+        runs-on: ubuntu-latest
+        steps:
+        # checkout the repo
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+
+        - name: Azure authentication
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+        - name: 'Login to docker registry'
+          uses: docker/login-action@v1
+          with:
+            registry: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}        
+            
+        - name: Push to docker registry
+          uses: docker/build-push-action@v2
+          with:
+            context: apis/userprofile
+            file: ./apis/userprofile/Dockerfile
+            push: true
+            tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-userprofile:${{ github.run_number }}
+
+        - name: 'Deploy to Azure Web App for Container'
+          uses: azure/webapps-deploy@v2
+          with: 
+            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-userprofile:${{ github.run_number }}
+            #slot-name: staging
