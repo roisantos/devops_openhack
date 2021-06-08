@@ -2,7 +2,7 @@
 
 declare -i duration=1
 declare -i iterator=0
-declare -i max_iterations=10
+declare -i max_iterations=60
 declare hasUrl=""
 declare endpoint
 
