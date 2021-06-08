@@ -76,7 +76,7 @@ jobs:
             with:
               creds: ${{ secrets.AZURE_CREDENTIALS }}
           
-          - name: Azure CLI script
+          - name: Swap staging slot to production
             uses: azure/CLI@v1
             with:
               azcliversion: 2.0.72
