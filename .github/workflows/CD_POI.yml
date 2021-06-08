@@ -59,8 +59,11 @@ jobs:
     deployments_checks:
         runs-on: ubuntu-latest
         steps:
+          - name: 'Checkout GitHub Action'
+            uses: actions/checkout@main
+            
           - name: Run polling script
             run: bash ./polling.sh ${{ env.ENDPOINT }}
             id: polling_check
-          
+            
           
