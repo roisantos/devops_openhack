@@ -67,4 +67,18 @@ jobs:
             run: bash ./polling.sh ${{ env.ENDPOINT }}
             id: polling_check
             
+    staging_to_prod:
+        needs: deployments_checks
+        runs-on: ubuntu-latest
+        steps:
+          - name: Azure authentication
+            uses: azure/login@v1
+            with:
+              creds: ${{ secrets.AZURE_CREDENTIALS }}
           
+          - name: Azure CLI script
+            uses: azure/CLI@v1
+            with:
+              azcliversion: 2.0.72
+              inlineScript: |
+                az webapp deployment slot swap  -g openhackprj6ity4rg -n openhackprj6ity4poi --slot staging --target-slot production
