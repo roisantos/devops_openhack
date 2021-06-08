@@ -28,9 +28,13 @@ jobs:
         - name: Push to docker registry
           uses: docker/build-push-action@v2
           with:
-            # TODO: Fix context and file path
             context: apis/poi/web
             file: ./apis/poi/web/Dockerfile
             push: true
-            # TODO: Fix github build number
             tags: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_number }}
+
+        - name: 'Deploy to Azure Web App for Container'
+          uses: azure/webapps-deploy@v2
+          with: 
+            app-name: openhackprj6ity4poi
+            images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_number }}
