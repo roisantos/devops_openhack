@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: openhackprj6ity4poi   # set this to your application's name
   ENDPOINT: https://openhackprj6ity4poi-staging.azurewebsites.net/api/healthcheck/poi
 
 name: CD_POI
@@ -44,7 +43,7 @@ jobs:
         - name: 'Deploy to Azure Web App for Container'
           uses: azure/webapps-deploy@v2
           with: 
-            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            app-name: ${{ secrets.AZURE_WEBAPP_NAME_POI }}
             images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_number }}
             slot-name: staging
             
