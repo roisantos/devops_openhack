@@ -43,7 +43,7 @@ jobs:
         - name: 'Deploy to Azure Web App for Container'
           uses: azure/webapps-deploy@v2
           with: 
-            app-name: ${{ secret.AZURE_WEBAPP_NAME_USERPROFILE }}
+            app-name: ${{ secrets.AZURE_WEBAPP_NAME_USERPROFILE }}
             images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-userprofile:${{ github.run_number }}
             slot-name: staging
             
