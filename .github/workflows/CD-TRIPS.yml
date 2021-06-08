@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: openhackprj6ity4trips   # set this to your application's name
   ENDPOINT: https://openhackprj6ity4trips-staging.azurewebsites.net/api/healthcheck/trips
 
 name: CD_TRIPS
@@ -44,7 +43,7 @@ jobs:
         - name: 'Deploy to Azure Web App for Container'
           uses: azure/webapps-deploy@v2
           with: 
-            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            app-name: ${{ secret.AZURE_WEBAPP_NAME_TRIPS }}
             images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-trips:${{ github.run_number }}
             slot-name: staging
             
