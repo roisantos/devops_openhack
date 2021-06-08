@@ -45,4 +45,4 @@ jobs:
           with: 
             app-name: ${{ env.AZURE_WEBAPP_NAME }}
             images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-poi:${{ github.run_number }}
-            slot-name: openhackprj6ity4poi-staging
+            slot-name: staging
