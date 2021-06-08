@@ -57,6 +57,7 @@ jobs:
             release_name: Release api-poi-${{ github.run_number }}
 
     deployments_checks:
+        needs: build-and-deploy
         runs-on: ubuntu-latest
         steps:
           - name: 'Checkout GitHub Action'
