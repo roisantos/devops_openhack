@@ -7,6 +7,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: openhackprj6ity4poi   # set this to your application's name
+  ENDPOINT: https://openhackprj6ity4poi-staging.azurewebsites.net/api/healthcheck/poi
 
 name: CD_POI
 
@@ -54,3 +55,12 @@ jobs:
           with:
             tag_name: api-poi-${{ github.run_number }}
             release_name: Release api-poi-${{ github.run_number }}
+
+    deployments_checks:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Run polling script
+            run: bash ./polling.sh ${{ env.ENDPOINT }}
+            id: polling_check
+          
+          
