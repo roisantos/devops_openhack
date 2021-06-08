@@ -45,4 +45,39 @@ jobs:
           with: 
             app-name: ${{ env.AZURE_WEBAPP_NAME }}
             images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/devopsoh/api-userprofile:${{ github.run_number }}
-            #slot-name: staging
+            slot-name: staging
+            
+        - name: Create a GitHub release
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          with:
+            tag_name: api-userprofile-${{ github.run_number }}
+            release_name: Release api-userprofile-${{ github.run_number }}
+
+    deployments_checks:
+        needs: build-and-deploy
+        runs-on: ubuntu-latest
+        steps:
+          - name: 'Checkout GitHub Action'
+            uses: actions/checkout@main
+            
+          - name: Run polling script
+            run: bash ./polling.sh ${{ env.ENDPOINT }}
+            id: polling_check
+            
+    staging_to_prod:
+        needs: deployments_checks
+        runs-on: ubuntu-latest
+        steps:
+          - name: Azure authentication
+            uses: azure/login@v1
+            with:
+              creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+          - name: Swap staging slot to production
+            uses: azure/CLI@v1
+            with:
+              azcliversion: 2.0.72
+              inlineScript: |
+                az webapp deployment slot swap  -g {{ secrets.AZURE_RESOURCE_GROUP }} -n {{ secrets.AZURE_WEBAPP_NAME_USERPROFILE }} --slot staging --target-slot production
