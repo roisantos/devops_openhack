@@ -114,4 +114,11 @@ jobs:
               azcliversion: 2.0.72
               inlineScript: |
                 az webapp traffic-routing set --distribution staging=0 --name ${{ secrets.AZURE_WEBAPP_NAME_POI }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+          - name: Create Issue Action
+            uses: nashmaniac/create-issue-action@v1.1
+            with:
+              title: staging_to_prod Failed ${{ secrets.AZURE_WEBAPP_NAME_POI }}
+              token: ${{secrets.REPO_TOKEN}}
+              labels: worflow-failed
+              body: Workflow failed for commit ${{github.sha}} 
          
