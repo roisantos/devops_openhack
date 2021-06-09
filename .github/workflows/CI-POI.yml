@@ -30,10 +30,11 @@ jobs:
     
     - name: Include package
       run:  dotnet add package coverlet.msbuild
+      working-directory: ./apis/poi/tests
     
     - name: Generate coverage report
       run: |
-        dotnet test /p:CollectCoverage=true /p:CoverletOutput=./ /p:CoverletOutputFormat=lcov
+        dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
       working-directory: ./apis/poi
       
     - name: Tests
@@ -43,4 +44,4 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.REPO_TOKEN }}
-        path-to-lcov: ./apis/poi/coverage.info 
+        path-to-lcov: ./apis/poi/TestResults/coverage.info 
