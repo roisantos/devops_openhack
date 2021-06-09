@@ -65,10 +65,28 @@ jobs:
           - name: Run polling script
             run: bash ./polling.sh ${{ env.ENDPOINT }}
             id: polling_check
-            
-    staging_to_prod:
+    
+    increase_staging_traffic:
         needs: deployments_checks
         runs-on: ubuntu-latest
+        steps:
+          - name: Azure authentication
+            uses: azure/login@v1
+            with:
+              creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+          - name: increase traffic
+            uses: azure/CLI@v1
+            with:
+              azcliversion: 2.0.72
+              inlineScript: |
+                az webapp traffic-routing set --distribution staging=50 --name ${{ secrets.AZURE_WEBAPP_NAME_POI }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+ 
+    staging_to_prod:
+        needs: increase_staging_traffic
+        runs-on: ubuntu-latest
+        environment:
+          name: Production
         steps:
           - name: Azure authentication
             uses: azure/login@v1
@@ -81,3 +99,26 @@ jobs:
               azcliversion: 2.0.72
               inlineScript: |
                 az webapp deployment slot swap  -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_WEBAPP_NAME_POI }} --slot staging --target-slot production
+    roll_back:
+        needs: staging_to_prod
+        if: failure()
+        runs-on: ubuntu-latest
+        steps:
+          - name: Azure authentication
+            uses: azure/login@v1
+            with:
+              creds: ${{ secrets.AZURE_CREDENTIALS }}
+          - name: Roll back traffic flow
+            uses: azure/CLI@v1
+            with:
+              azcliversion: 2.0.72
+              inlineScript: |
+                az webapp traffic-routing set --distribution staging=0 --name ${{ secrets.AZURE_WEBAPP_NAME_POI }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+          - name: Create Issue Action
+            uses: nashmaniac/create-issue-action@v1.1
+            with:
+              title: staging_to_prod Failed ${{ secrets.AZURE_WEBAPP_NAME_POI }}
+              token: ${{secrets.REPO_TOKEN}}
+              labels: worflow-failed
+              body: Workflow failed for commit ${{github.sha}} 
+         

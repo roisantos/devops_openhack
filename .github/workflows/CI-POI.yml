@@ -8,7 +8,7 @@ on:
     branches: [ master ]    
     paths: 
     - 'apis/poi/**'
-
+  workflow_dispatch:
 jobs:
   build:
 
@@ -27,3 +27,12 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
       working-directory: ./apis/poi
+    - name: Generate coverage report
+      run: |
+        dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      working-directory: ./apis/poi
+    - name: Publish coverage report to coveralls.io
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.REPO_TOKEN }}
+        path-to-lcov: ./apis/poi/TestResults/coverage.info 
